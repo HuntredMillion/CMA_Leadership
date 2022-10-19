@@ -16,5 +16,14 @@ namespace CMA_Leadership.Controllers
         {
             return View(await _context.Students.ToListAsync());
         }
+
+        [HttpPost]
+        public ActionResult AjaxMethod()
+        {
+
+            var StuList = _context.Students.ToList();
+            return Json(StuList);
+        }
+
     }
     }

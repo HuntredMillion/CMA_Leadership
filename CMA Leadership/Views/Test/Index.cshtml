@@ -4,158 +4,51 @@
 *@
 @{
 }
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>  
-<link href="~/Content/bootstrap.css" rel="stylesheet" />  
-  
-<link href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css" rel="stylesheet" />  
-<link href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css" rel="stylesheet" />  
- 
-<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>  
-<script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap4.min.js "></script>  
+<!DOCTYPE html>
 
+<html>
+<head>
+
+
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+
+    <link href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css" rel="stylesheet" />
+
+    <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap4.min.js "></script>
 <script>
-    $(document).ready(function () {
-        editor = new $.fn.dataTable.Editor({
-            ajax: "../php/staff.php",
-            table: "#demoGrid",
-            fields: [{
-                label: "First name:",
-                name: "first_name"
-            }, {
-                label: "Last name:",
-                name: "last_name"
-            }, {
-                label: "Current Position:",
-                name: "Current_Position"
-            }, {
-                label: "Current Rank:",
-                name: "Current_Rank"
-            }
-            ]
-        });
+        $(document).ready(function () {
 
-        // Activate an inline edit on click of a table cell
-        $('#demoGrid').on('click', 'tbody td.editable', function (e) {
-            editor.inline(this);
-        });
-
-        $('#demoGrid').DataTable({
-            dom: 'Bfrtip',
-            ajax: '../php/staff.php',
-            columns: [
-                {
-                    data: null,
-                    defaultContent: '',
-                    className: 'select-checkbox',
-                    orderable: false
+            $('#demoGrid').DataTable(
+            {
+                "processing": true, // for show progress bar
+                "serverSide": true,
+                "ajax": {
+                    "url": "/Test/AjaxLoad",
+                    "type": "POST",
+                    "datatype": "json"
                 },
-                { data: 'StudentId' },
-                { data: 'first_name', className: 'editable' },
-                { data: 'last_name', className: 'editable' },
-                { data: 'Years_Attended' },
-                { data: 'Division' },
-                { data: 'Current_Position', editField: "positions.site" }
-                { data: 'Current_Rank', className: 'editable' }
-                { data: 'Unit' },
-            ],
-            select: {
-                style: 'os',
-                selector: 'td:first-child'
-            },
-            buttons: [
-                { extend: 'create', editor: editor },
-                { extend: 'edit', editor: editor },
-                { extend: 'remove', editor: editor }
-            ]
+
+                "columns": [          
+                    { "data": 'StudentId' },
+                    { "data": 'first_name'},
+                    { "data": 'last_name'},
+                    { "data": 'Years_Attended' },
+                    { "data": 'Division' },
+                    { "data": 'Current_Position' }
+                    { "data": 'Current_Rank'}
+                    { "data": 'Unit' },
+                ],
+            });
+
+
         });
-    });
+        
 </script>
-
-<script>
-    {
-        "options": {
-            "positions.site": [
-                {
-                    "label" = "PL",
-                    "value" = "PL"
-                },
-                {
-                    "label" = "UC",
-                    "value" = "UC"
-                },
-                {
-                    "label" = "XO",
-                    "value" = "XO"
-                },
-                {
-                    "label" = "PS",
-                    "value" = "PS"
-                },
-                {
-                    "label" = "SL",
-                    "value" = "SL"
-                },
-                {
-                    "label" = "TL",
-                    "value" = "TL"
-                },
-                {
-                    "label" = "UNIT NCO",
-                    "value" = "UNIT NCO"
-                },
-                {
-                    "label" = "1ST SGT",
-                    "value" = "1ST SGT"
-                },
-                {
-                    "label" = "SQAD ATHL",
-                    "value" = "SQAD ATHL"
-                },
-                {
-                    "label" = "MnA OFFICER",
-                    "value" = "MnA OFFICER"
-                },
-                {
-                    "label" = "REG ADJ",
-                    "value" = "REG ADJ"
-                },
-                {
-                    "label" = "MnA NCO",
-                    "value" = "MnA NCO"
-                },
-                {
-                    "label" = "RSM",
-                    "value" = "RSM"
-                },
-                {
-                    "label" = "SQUAD ADJ",
-                    "value" = "SQUAD ADJ"
-                },
-                {
-                    "label" = "DIV",
-                    "value" = "DIV"
-                },
-                {
-                    "label" = "AIDE OPS",
-                    "value" = "AIDE OPS"
-                },
-                {
-                    "label" = "AIDE ADMIN",
-                    "value" = "AIDE ADMIN"
-                },
-                {
-                    "label" = "DRUM MAJ.",
-                    "value" = "DRUM MAJ."
-                },
-                {
-                    "label" = "OPS",
-                    "value" = "OPS"
-                },
-
-            ]
-        }
-    }
-</script>
+</head>
 <div class="container">
     <br />
     <div style="width:90%; margin:0 auto;">
@@ -172,43 +65,13 @@
                     <th>Unit</th>
                 </tr>
             </thead>
-            <tbody>
-@foreach (var item in Model) {
-                <tr>
-                    <td> 
-                        @Html.DisplayFor(modelItem => item.StudentId)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Last_Name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.First_Name)
-                    </td>
-                    <td> 
-                        @Html.DisplayFor(modelItem => item.Years_Attended)
-                    </td>
-                    <td> 
-                        @Html.DisplayFor(modelItem => item.Division)
-                    </td>
-                    <td> 
-                        @Html.DisplayFor(modelItem => item.Current_Position)
-                    </td>
-                    <td> 
-                        @Html.DisplayFor(modelItem => item.Current_Rank)
-                    </td>
-                    <td> 
-                        @Html.DisplayFor(modelItem => item.Unit)
-                    </td>
-
-                </tr>
-}
-            </tbody>
         </table>
     </div>
 </div>
 
-<script>
+@*<script>
 
     $('#demoGrid').dataTable({
     });
-</script>  
+</script> *@
+</html>
