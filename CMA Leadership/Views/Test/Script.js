@@ -1,18 +1,12 @@
 ﻿var editor;
-
 $(document).ready(function () {
     editor = new $.fn.dataTable.Editor({
         $.ajax(
             {
-                url: '/Test/AjaxMethod',
+                url: '/Test/AjaxLoad',
                 type: "POST",
                 dataType: "JSON",
-                dataSrc: function (json) {
-                    // Settings.
-                    jsonObj = $.parseJSON(json.data) 
-
-                    // Data
-                    return jsonObj.data;
+                dataSrc: ""
                 }
             }),
         table: "#demoGrid",
@@ -44,12 +38,12 @@ $(document).ready(function () {
             url: '/Test/AjaxMethod',
             type: "POST",
             dataType: "JSON",
-            dataSrc: function (json) {
-                // Settings.
-                jsonObj = $.parseJSON(json.data)
+            //dataSrc: function (json) {
+            //    // Settings.
+            //    jsonObj = $.parseJSON(json.data)
 
-                // Data
-                return jsonObj.data;
+            //    // Data
+            //    return jsonObj.data;
             }
         },
         columns: [

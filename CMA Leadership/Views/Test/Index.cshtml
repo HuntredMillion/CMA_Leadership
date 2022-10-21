@@ -4,22 +4,15 @@
 *@
 @{
 }
-<!DOCTYPE html>
-
-<html>
-<head>
 
 
 
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <link href="~/Content/bootstrap.css" rel="stylesheet" />
-
-    <link href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css" rel="stylesheet" />
-    <link href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css" rel="stylesheet" />
-
-    <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap4.min.js "></script>
+    
+@section Scripts{
+    
 <script>
+
+        //debugger;
         $(document).ready(function () {
 
             $('#demoGrid').DataTable(
@@ -29,26 +22,28 @@
                 "ajax": {
                     "url": "/Test/AjaxLoad",
                     "type": "POST",
-                    "datatype": "json"
+                    
+                    "datatype": "json",
+                    "dataSrc": "",
+                    
                 },
 
                 "columns": [          
-                    { "data": 'StudentId' },
-                    { "data": 'first_name'},
-                    { "data": 'last_name'},
-                    { "data": 'Years_Attended' },
-                    { "data": 'Division' },
-                    { "data": 'Current_Position' }
-                    { "data": 'Current_Rank'}
-                    { "data": 'Unit' },
+                    { "data": 'studentId' },
+                    { "data": 'first_Name'},
+                    { "data": 'last_Name'},
+                    { "data": 'years_Attended' },
+                    { "data": 'division' },
+                    { "data": 'current_Position' },
+                    { "data": 'current_Rank'},
+                    { "data": 'unit' },
                 ],
             });
-
-
-        });
-        
+        });      
 </script>
-</head>
+}
+
+<body>
 <div class="container">
     <br />
     <div style="width:90%; margin:0 auto;">
@@ -65,13 +60,9 @@
                     <th>Unit</th>
                 </tr>
             </thead>
+                    <tbody></tbody>
         </table>
     </div>
 </div>
+</body>
 
-@*<script>
-
-    $('#demoGrid').dataTable({
-    });
-</script> *@
-</html>

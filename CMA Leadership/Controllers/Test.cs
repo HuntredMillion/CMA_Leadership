@@ -1,6 +1,7 @@
 ﻿using CMA_Leadership.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using CMA_Leadership.Models;
 
 namespace CMA_Leadership.Controllers
 {
@@ -12,18 +13,21 @@ namespace CMA_Leadership.Controllers
         {
             _context = context;
         }
-        public async Task<IActionResult> Index()
-        {
-            return View(await _context.Students.ToListAsync());
-        }
+        //public async Task<IActionResult> Index()
+        //{
+        //    return View(await _context.Students.ToListAsync());
+        //}
 
         [HttpPost]
-        public ActionResult AjaxMethod()
+        public JsonResult AjaxLoad()
         {
-
             var StuList = _context.Students.ToList();
             return Json(StuList);
+            
         }
-
+        public Task<IActionResult> Index()
+        {
+            return Task.FromResult((IActionResult)View());
+        }
     }
     }

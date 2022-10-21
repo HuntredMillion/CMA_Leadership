@@ -11,8 +11,8 @@ namespace CMA_Leadership.Models
         public string First_Name { get; set; }
         public int Years_Attended { get; set; }
         public string Division { get; set; }
-        public string Current_Position { get; set; }
-        public string Current_Rank { get; set; }
+        public string? Current_Position { get; set; }
+        public string? Current_Rank { get; set; }
         public string Unit { get; set; }
     }
 }
