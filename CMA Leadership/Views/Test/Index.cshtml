@@ -3,28 +3,66 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 
 
     
 @section Scripts{
-    
-<script>
+    <script>
 
-        //debugger;
+        debugger;
+        Ranks = ["", "PFC", "LCP", "CPL", "SGT", "SSGT", "2LT", "LT", "CAPT"];
+        Positions = ["", "SL", "TL", "DRUM MAJ.", "UC", "PL", "PS", "XO", "SQAD ATHL", "MnA OFFICER", "AIDE ADMIN", "REG ADJ", "SQUAD ADJ", "DIV", "UNIT NCO", "1ST SGT", "OPS", "AIDE OPS", "MnA NCO", "RSM"];
         $(document).ready(function () {
+             
 
-            $('#demoGrid').DataTable(
+            
+
+            table = $('#demoGrid').DataTable(
             {
+                "pageLength": 75,
+                "dom": "Bfrtip",
+                "order": [[1, 'asc']],
                 "processing": true, // for show progress bar
-                "serverSide": true,
+                "serverSide": false, //for large amounts of data. Doesn't work here though
                 "ajax": {
                     "url": "/Test/AjaxLoad",
                     "type": "POST",
                     
                     "datatype": "json",
-                    "dataSrc": "",
+                    "dataSrc": function (json) {
+                        var return_data = new Array();
+                        for (var i = 0; i < json.length; i++) {
+                            if (json[i].division === "1st Classman/Senior"){
+                                json[i].division = "1st Class";
+                            }
+                            else if (json[i].division === "2nd Classman/Junior") {
+                                json[i].division = "2nd Class";
+                            }
+                            else if (json[i].division === "3rd Classman/Sophomore") {
+                                json[i].division = "3rd Class";
+                            }
+                            else{
+                                json[i].division = "4th Class";
+                            }
+                            return_data.push({
+                                'studentId': json[i].studentId,
+                                'first_Name': json[i].first_Name,
+                                'last_Name': json[i].last_Name,
+                                'years_Attended': json[i].years_Attended,
+                                'division': json[i].division,
+                                'updated_Position': json[i].updated_Position,
+                                'updated_Rank': json[i].updated_Rank,
+                                'current_Position': json[i].current_Position,
+                                'current_Rank': json[i].current_Rank,
+                                'unit': json[i].unit
+                            })
+                        }
+                        return return_data;
+                    },
                     
                 },
 
@@ -34,35 +72,136 @@
                     { "data": 'last_Name'},
                     { "data": 'years_Attended' },
                     { "data": 'division' },
-                    { "data": 'current_Position' },
-                    { "data": 'current_Rank'},
-                    { "data": 'unit' },
+                        { "data": 'updated_Position'},
+                        { "data": 'updated_Rank'},
+                        { "data": 'current_Position'},
+                        { "data": 'current_Rank'},
+                    //{ "data": 'unit' },
                 ],
+                "columnDefs": [
+                    {
+                        target: 0,
+                        visible: false,
+                        searchable: false,
+                    }]    
             });
-        });      
+
+            table.button().add(0, {
+                "text": "View",
+                init: function (dt, node, config) {
+                    this.disable();
+                },
+                action: function (e, dt, node, config) {                 
+                    table.column(5).nodes().each(function (index) {
+                        console.log(table.cell(index).data());
+                        //var CName = table.cell(index).data()
+                        var thisCell = table.cell(index);
+                        thisCell.data($(".updatePosition").first().find(":selected").text());                        
+                    });
+                    table.column(6).nodes().each(function (index) {
+                        //console.log(table.cell(index).data());
+                        //var CName = table.cell(index).data()
+                        var thisCell = table.cell(index);
+                        thisCell.data($(".updateRank").first().find(":selected").text());
+                    });
+                    this.disable();
+                    table.button(1).enable();    
+                },
+                
+            });
+
+            table.button().add(1, {
+                "text": "Edit",
+                action: function (e, dt, node, config) {
+                    table.column(5).nodes().each(function (index) {
+                        //console.log(table.cell(index).data());
+                        var CName = table.cell(index).data()
+                        //console.log(CName)
+                        var eyedee = table.row(this).id();
+                        
+                        var thisCell = table.cell(index);
+                        //console.log(thisCell.data());
+                        thisCell.data($("<select></select>", {
+                            "class": "updatePosition"
+                        }).append(Positions.map(v => $("<option></option>", {
+                            "text": v,
+                            "value": v,
+                            "selected": (v === thisCell.data())
+                        }))).prop("outerHTML"));
+                    });
+                    table.column(6).nodes().each(function (index) {
+                        //console.log(table.cell(index).data());
+                        var CName = table.cell(index).data()
+                        var thisCell = table.cell(index);
+                        //console.log(thisCell.data());
+                        thisCell.data($("<select></select>", {
+                            "class": "updateRank"
+                        }).append(Ranks.map(v => $("<option></option>", {
+                            "text": v,
+                            "value": v,
+                            "selected": (v === thisCell.data())
+
+                        }))).prop("outerHTML"));
+                    });
+                    this.disable();
+                    table.button(0).enable();
+                    
+                }
+            });
+            
+            $('#demoGrid tbody').on("change", ".updatePosition", (e) => {
+                var studRow = e.target.offsetParent._DT_CellIndex.row
+                var studId = table.row(studRow).data().studentId;
+                //console.log(studId)
+                var thisCell = table.cell({row: studRow, column: 5});
+                var ans = thisCell.node().children[0].selectedOptions[0].innerText;
+                $.ajax({
+                    "url": '/Test/UpdatePos',
+                    "data": { id: studId, upPos : ans }, 
+                });
+                
+            });
+            $('#demoGrid tbody').on("change", ".updateRank", (e) => {
+                var studRow = e.target.offsetParent._DT_CellIndex.row
+                var studId = table.row(studRow).data().studentId;
+                //console.log(studId)
+                var thisCell = table.cell({ row: studRow, column: 6 });
+                var ans = thisCell.node().children[0].selectedOptions[0].innerText;
+                $.ajax({
+                    "url": '/Test/UpdateRank',
+                    "data": { id: studId, upRank: ans },
+                });
+
+            });
+            
+
+        });
+
 </script>
 }
 
-<body>
+
 <div class="container">
     <br />
     <div style="width:90%; margin:0 auto;">
         <table id="demoGrid" class="table table-striped table-bordered dt-responsive nowrap" width="100%" cellspacing="0">
             <thead>
                 <tr>
-                    <th>StudentId</th>
-                    <th>Last_Name</th>
-                    <th>First_Name</th>
-                    <th>Years_Attended</th>
-                    <th>Division</th>
-                    <th>Current_Posititon</th>
-                    <th>Current_Rank</th>
-                    <th>Unit</th>
+                    <th>ID</th>
+                    <th>Last Name</th>
+                    <th>First Name</th>
+                    <th>Years</th>
+                    <th>Class</th>
+                    <th>Updated Position</th>
+                    <th>Updated Rank</th>
+                    <th>Current Position</th>
+                    <th>Current Rank</th>
+                    @*<th>Unit</th>*@
                 </tr>
             </thead>
                     <tbody></tbody>
         </table>
     </div>
 </div>
-</body>
+
 

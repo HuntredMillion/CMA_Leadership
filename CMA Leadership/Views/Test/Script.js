@@ -1,76 +1,112 @@
-﻿var editor;
+﻿
+debugger;
+Positions = ["SL", "TL", "DRUM MAJ.", "UC", "PL", "PS", "XO", "SQAD ATHL", "MnA OFFICER", "AIDE ADMIN", "REG ADJ", "SQUAD ADJ", "DIV", "UNIT NCO", "1ST SGT", "OPS", "AIDE OPS", "MnA NCO", "RSM"];
 $(document).ready(function () {
-    editor = new $.fn.dataTable.Editor({
-        $.ajax(
-            {
-                url: '/Test/AjaxLoad',
-                type: "POST",
-                dataType: "JSON",
-                dataSrc: ""
-                }
-            }),
-        table: "#demoGrid",
-        fields: [{
-            label: "First name:",
-            name: "first_name"
-        }, {
-            label: "Last name:",
-            name: "last_name"
-        }, {
-            label: "Current Position:",
-            name: "Current_Position"
-        }, {
-            label: "Current Rank:",
-            name: "Current_Rank"
-        }
-        ]
-    });
 
-    // Activate an inline edit on click of a table cell
-    $('#demoGrid').on('click', 'tbody td.editable', function (e) {
-        editor.inline(this);
-    });
 
-    $('#demoGrid').DataTable({
-        dom: 'Bfrtip',
-        ajax:
+
+
+    var table = $('#demoGrid').DataTable(
         {
-            url: '/Test/AjaxMethod',
-            type: "POST",
-            dataType: "JSON",
-            //dataSrc: function (json) {
-            //    // Settings.
-            //    jsonObj = $.parseJSON(json.data)
 
-            //    // Data
-            //    return jsonObj.data;
-            }
-        },
-        columns: [
-            {
-                data: null,
-                defaultContent: '',
-                className: 'select-checkbox',
-                orderable: false
+            "dom": "Bfrtip",
+            "processing": true, // for show progress bar
+            "serverSide": false, //for large amounts of data. Doesn't work here though
+            "ajax": {
+                "url": "/Test/AjaxLoad",
+                "type": "POST",
+
+                "datatype": "json",
+                "dataSrc": "",
+
             },
-            { data: 'StudentId' },
-            { data: 'first_name', className: 'editable' },
-            { data: 'last_name', className: 'editable' },
-            { data: 'Years_Attended' },
-            { data: 'Division' },
-            { data: 'Current_Position', editField: "positions.site" }
-                { data: 'Current_Rank', className: 'editable' }
-                { data: 'Unit' },
-        ],
-        select: {
-            style: 'os',
-            selector: 'td:first-child'
+
+            "columns": [
+                { "data": 'studentId' },
+                { "data": 'first_Name' },
+                { "data": 'last_Name' },
+                { "data": 'years_Attended' },
+                { "data": 'division' },
+                { "data": 'current_Position', "name": 'Position' },
+                { "data": 'current_Rank', "name": 'current_Rank' },
+                { "data": 'unit' },
+            ],
+            //"buttons": [
+            //    {
+            //        "text": "View",
+            //        "id": "DataView",
+            //        action: function (e, dt, node, config) {
+            //            if (this.text() === "View"){
+            //                //alert('View activated');
+            //                this.text("Edit")
+            //                this.disable();
+            //                buttons(1).disable();
+            //            }
+            //            else{
+            //                    alert('Edit activated');
+            //                    this.text("View")
+            //            }
+            //        }
+
+            //    },
+            //    {
+            //            "text": "No",
+            //            "id": "Nope",
+            //    }
+            //]      
+        });
+
+    table.button().add(0, {
+        "text": "View",
+
+        action: function (e, dt, node, config) {
+            alert('View activated');
+            this.disable();
+            table.button(1).enable();
         },
-        buttons: [
-            { extend: 'create', editor: editor },
-            { extend: 'edit', editor: editor },
-            { extend: 'remove', editor: editor }
-        ]
+        "enabled": false
+    });
+    table.button().add(1, {
+        "text": "Edit",
+        action: function (e, dt, node, config) {
+            alert('Edit activated');
+            this.disable();
+            table.button(0).enable();
+        }
     });
 
+});
+
+
+
+
+// Activate an inline edit on click of a table cell
+$('#demoGrid').on('click', 'td', function () {
+    //alert('Data:' + $(this).html().trim());
+    //alert('Row:' + $(this).parent().find('td').html().trim());
+    const CName = $('#demoGrid thead tr th').eq($(this).index()).html().trim()
+    //alert('Column:' + CName);
+
+    ////var data = table.row(this).data();
+    ////alert('You clicked on ' + data[0] + "'s row");
+    ////console.log("you clicked on" + data[0])
+
+    if (CName === "Current_Position") {
+        //console.log('TD cell textContent : ', this.textContent)
+        //console.log('TD cell textContent : ', this.textContent)
+        var thisCell = table.cell(this);
+        //console.log(thisCell.data());
+        thisCell.data($("<select></select>", {
+            "class": "updatePosition"
+        }).append(Positions.map(v => $("<option></option>", {
+            "text": v,
+            "value": v,
+            "selected": (v === thisCell.data())
+        }))).prop("outerHTML"));
+    }
+});
+
+$('#demoGrid tbody').on("change", ".changePosition", () => {
+    table.cell($(".changePosition").parents('td')).data($(".changePosition").val());
+    //$('#demoGrid').removeClass("editing");
 });
