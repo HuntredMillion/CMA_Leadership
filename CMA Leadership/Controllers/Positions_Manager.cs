@@ -1,17 +1,16 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using CMA_Leadership.Data;
-using CMA_Leadership.Models;
-
-
-namespace CMA_Leadership.Controllers
+﻿namespace CMA_Leadership.Controllers
 {
-    public class Positions_Counselor : Controller
+
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
+    using CMA_Leadership.Data;
+    using CMA_Leadership.Models;
+
+    public class Positions_Manager : Controller
     {
         private readonly dbContext _context;
 
-        public Positions_Counselor(dbContext context)
+        public Positions_Manager(dbContext context)
         {
             _context = context;
         }
@@ -23,9 +22,9 @@ namespace CMA_Leadership.Controllers
         [HttpPost]
         public JsonResult AjaxLoad()
         {
-            var StuList = _context.StudentMasterdata.ToList();
+            var StuList = _context.Students.ToList();
             return Json(StuList);
-            
+
         }
         public Task<IActionResult> Index()
         {
@@ -35,7 +34,8 @@ namespace CMA_Leadership.Controllers
         {
             return Task.FromResult((IActionResult)View());
         }
-        public async Task<IActionResult> UpdatePos(int id, string upPos){
+        public async Task<IActionResult> UpdatePos(int id, string upPos)
+        {
             var stud = _context.Students.FirstOrDefault(p => p.StudentId == id);
             stud.Updated_Position = upPos;
             if (ModelState.IsValid)

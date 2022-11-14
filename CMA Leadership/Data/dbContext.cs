@@ -9,6 +9,8 @@ namespace CMA_Leadership.Data
         {
         }
         public DbSet<Student> Students { get; set; }
+
+        public DbSet<StudentMasterdata> StudentMasterdata { get; set; }
     }
     
 }
