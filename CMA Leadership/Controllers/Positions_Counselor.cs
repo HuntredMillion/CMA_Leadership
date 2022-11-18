@@ -23,7 +23,7 @@ namespace CMA_Leadership.Controllers
         [HttpPost]
         public JsonResult AjaxLoad()
         {
-            var StuList = _context.StudentMasterdata.ToList();
+            var StuList = _context.StudentMasterdata.Where(s => s.Unit == "BD").ToList();
             return Json(StuList);
             
         }
@@ -35,89 +35,97 @@ namespace CMA_Leadership.Controllers
         {
             return Task.FromResult((IActionResult)View());
         }
-        public async Task<IActionResult> UpdatePos(int id, string upPos){
-            var stud = _context.Students.FirstOrDefault(p => p.StudentId == id);
-            stud.Updated_Position = upPos;
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(stud);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!StudentExists(stud.StudentId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-
-            return View();
-        }
-
-        public async Task<IActionResult> UpdateRank(int id, string upRank)
-        {
-            var stud = _context.Students.FirstOrDefault(p => p.StudentId == id);
-            stud.Updated_Rank = upRank;
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(stud);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!StudentExists(stud.StudentId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-
-            return View();
-        }
-        public async Task<IActionResult> UpdateNotes(int id, string? newNote)
-        {
-            var stud = _context.Students.FirstOrDefault(p => p.StudentId == id);
-            stud.Notes = newNote;
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(stud);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!StudentExists(stud.StudentId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View();
-        }
+        
         private bool StudentExists(int id)
         {
             return _context.Students.Any(e => e.StudentId == id);
+        }
+
+        private bool StudentMasterExists(int id)
+        {
+            return _context.StudentMasterdata.Any(e => e.StudentId == id);
+        }
+
+
+
+        public ActionResult UpdatePos(int Id, string pos)
+        {
+            if (StudentExists(Id))
+            {
+                var stud = _context.Students.Where(p => p.StudentId == Id).FirstOrDefault();               
+                stud.Updated_Position = pos;
+                _context.Update(stud);
+                _context.SaveChanges();
+                return RedirectToAction(nameof(Index));
+            }
+            else if (StudentMasterExists(Id))
+            {
+                var stud = _context.StudentMasterdata.FirstOrDefault(p => p.StudentId == Id);
+                var newStud = new Student {
+                    StudentId = stud.StudentId,
+                    Updated_Position = pos
+                };
+                _context.Students.Add(newStud);
+                _context.SaveChanges();                    
+                return RedirectToAction(nameof(Index));   
+            }
+            else { 
+                return View(); 
+            }
+        }
+        public ActionResult UpdateRank(int Id, string rank)
+        {
+            if (StudentExists(Id))
+            {
+                var stud = _context.Students.Where(p => p.StudentId == Id).FirstOrDefault();
+                stud.Updated_Rank = rank;
+                _context.Update(stud);
+                _context.SaveChanges();
+                return RedirectToAction(nameof(Index));
+            }
+            else if (StudentMasterExists(Id))
+            {
+                var stud = _context.StudentMasterdata.FirstOrDefault(p => p.StudentId == Id);
+                var newStud = new Student
+                {
+                    StudentId = stud.StudentId,
+                    Updated_Rank = rank
+                };
+                _context.Students.Add(newStud);
+                _context.SaveChanges();
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                return View();
+            }
+        }
+        public ActionResult NoteTaker(int Id, string note)
+        {
+            if (StudentExists(Id))
+            {
+                var stud = _context.Students.Where(p => p.StudentId == Id).FirstOrDefault();
+                stud.Notes = note;
+                _context.Update(stud);
+                _context.SaveChanges();
+                return RedirectToAction(nameof(Index));
+            }
+            else if (StudentMasterExists(Id))
+            {
+                var stud = _context.StudentMasterdata.FirstOrDefault(p => p.StudentId == Id);
+                var newStud = new Student
+                {
+                    StudentId = stud.StudentId,
+                    Notes = note
+                };
+                _context.Students.Add(newStud);
+                _context.SaveChanges();
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                return View();
+            }
         }
     }
 }

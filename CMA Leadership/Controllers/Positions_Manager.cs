@@ -22,7 +22,8 @@
         [HttpPost]
         public JsonResult AjaxLoad()
         {
-            var StuList = _context.Students.ToList();
+
+            var StuList = _context.Students/*.Where(s => s.Unit == "BD")*/.ToList();
             return Json(StuList);
 
         }

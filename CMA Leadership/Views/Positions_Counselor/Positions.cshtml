@@ -49,17 +49,19 @@
                                     json[i].division = "4th Class";
                                 }
                                 return_data.push({
-                                    'studentId': json[i].studentId,
-                                    'last_Name': json[i].last_Name,
-                                    'first_Name': json[i].first_Name,
-                                    'years_Attended': json[i].years_Attended,
-                                    'division': json[i].division,
-                                    'updated_Position': json[i].updated_Position,
-                                    'updated_Rank': json[i].updated_Rank,
-                                    'current_Position': json[i].current_Position,
-                                    'current_Rank': json[i].current_Rank,
-                                    'unit': json[i].unit,
-                                    'notes': json[i].notes
+                                    'StudentId': json[i].studentId,
+                                    'Last_Name': json[i].last_Name,
+                                    'First_Name': json[i].first_Name,
+                                    'Years_Attended': json[i].years_Attended,
+                                    'Division': json[i].division,
+                                    'Updated_Position': json[i].updated_Position,
+                                    'Updated_Rank': json[i].updated_Rank,
+                                    'Current_Position': json[i].current_Position,
+                                    'Current_Rank': json[i].current_Rank,
+                                    'Previous_Position': json[i].current_Position,
+                                    'Previous_Rank': json[i].current_Rank,
+                                    'Unit': json[i].unit,
+                                    'Notes': json[i].notes
                                 })
                             }
                             return return_data;
@@ -68,21 +70,23 @@
                     },
 
                     "columns": [
-                        { "data": 'studentId' },
-                        { "data": 'last_Name' },
-                        { "data": 'first_Name' },
-                        { "data": 'years_Attended' },
-                        { "data": 'division' },
-                        { "data": 'updated_Position' },
-                        { "data": 'updated_Rank' },
-                        { "data": 'current_Position' },
-                        { "data": 'current_Rank' },
-                        { "data": 'notes' },
+                        { "data": 'StudentId' },
+                        { "data": 'Last_Name' },
+                        { "data": 'First_Name' },
+                        { "data": 'Years_Attended' },
+                        { "data": 'Division' },
+                        { "data": 'Updated_Position' },
+                        { "data": 'Updated_Rank' },
+                        { "data": 'Current_Position' },
+                        { "data": 'Current_Rank' },                 
+                        { "data": 'Notes' },
+                        { "data": 'Previous_Position' },
+                        { "data": 'Previous_Rank' },
                         //{ "data": 'unit' },
                     ],
                     "columnDefs": [
                         {
-                            target: 0,
+                            targets: [0,10,11],
                             visible: false,
                             searchable: false,
                         },
@@ -174,39 +178,53 @@
                 }
             });
 
+            //$('#demoGrid tbody').on("change", ".updatePosition", (e) => {
+            //    var studRow = e.target.offsetParent._DT_CellIndex.row
+            //    var studId = table.row(studRow).data().StudentId;
+            //    //console.log(studId)
+            //    var noteData = table.cell({ row: studRow, column: 9 }).node().childNodes[0].value;
+            //    var posData = table.cell({ row: studRow, column: 5 }).node().children[0].selectedOptions[0].innerText;
+            //    var rankData = table.cell({ row: studRow, column: 6 }).node().children[0].selectedOptions[0].innerText;
+            //    var stud = table.row(studRow).data();
+            //    stud.Notes = noteData;
+            //    stud.Updated_Position = posData;
+            //    stud.Updated_Rank = rankData;
+            //    $.ajax({
+            //        "url": '/Positions_Counselor/UpdateNotes',
+            //        "data": stud,
+            //    });
+
+            //});
             $('#demoGrid tbody').on("change", ".updatePosition", (e) => {
                 var studRow = e.target.offsetParent._DT_CellIndex.row
-                var studId = table.row(studRow).data().studentId;
-                //console.log(studId)
+                var studId = table.row(studRow).data().StudentId;
                 var thisCell = table.cell({ row: studRow, column: 5 });
                 var ans = thisCell.node().children[0].selectedOptions[0].innerText;
                 $.ajax({
                     "url": '/Positions_Counselor/UpdatePos',
-                    "data": { id: studId, upPos: ans },
+                    "data": { Id: studId, pos: ans },
                 });
 
             });
             $('#demoGrid tbody').on("change", ".updateRank", (e) => {
                 var studRow = e.target.offsetParent._DT_CellIndex.row
-                var studId = table.row(studRow).data().studentId;
-                //console.log(studId)
+                var studId = table.row(studRow).data().StudentId;
                 var thisCell = table.cell({ row: studRow, column: 6 });
                 var ans = thisCell.node().children[0].selectedOptions[0].innerText;
                 $.ajax({
                     "url": '/Positions_Counselor/UpdateRank',
-                    "data": { id: studId, upRank: ans },
+                    "data": { Id: studId, rank: ans },
                 });
             });
 
             $('#demoGrid tbody').on("change", ".noteTaker", (e) => {
                 var studRow = e.target.offsetParent._DT_CellIndex.row
-                var studId = table.row(studRow).data().studentId;
-                //console.log(studId)
+                var studId = table.row(studRow).data().StudentId;
                 var thisCell = table.cell({ row: studRow, column: 9 });
                 var ans = thisCell.node().childNodes[0].value;
                 $.ajax({
-                    "url": '/Positions_Counselor/UpdateNotes',
-                    "data": { id: studId, newNote: ans },
+                    "url": '/Positions_Counselor/NoteTaker',
+                    "data": { Id: studId, note: ans },
                 });
             });
 
@@ -220,7 +238,7 @@
             border: 0;
             margin: 0;
             border-left: 5px solid green;
-            height: 100%;
+            height: 100%; 
             float: left;
         }
     </style>
